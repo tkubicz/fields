@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use field_names::Fields;
+use fields::Fields;
 
 fn get_fields<T: Fields>() -> Vec<&'static str> {
     T::fields()

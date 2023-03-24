@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, LinkedList, VecDeque};
 
 use crate::Fields;
 
@@ -30,9 +30,45 @@ impl<T: Fields> Fields for Vec<T> {
     }
 }
 
+impl<T: Fields> Fields for VecDeque<T> {
+    fn fields() -> &'static Option<Vec<String>> {
+        T::fields()
+    }
+}
+
+impl<T: Fields> Fields for LinkedList<T> {
+    fn fields() -> &'static Option<Vec<String>> {
+        T::fields()
+    }
+}
+
 impl<K, V: Fields> Fields for HashMap<K, V> {
     fn fields() -> &'static Option<Vec<String>> {
         V::fields()
+    }
+}
+
+impl<K, V: Fields> Fields for BTreeMap<K, V> {
+    fn fields() -> &'static Option<Vec<String>> {
+        V::fields()
+    }
+}
+
+impl<T, S: Fields> Fields for HashSet<T, S> {
+    fn fields() -> &'static Option<Vec<String>> {
+        S::fields()
+    }
+}
+
+impl<T: Fields> Fields for BTreeSet<T> {
+    fn fields() -> &'static Option<Vec<String>> {
+        T::fields()
+    }
+}
+
+impl<T: Fields> Fields for BinaryHeap<T> {
+    fn fields() -> &'static Option<Vec<String>> {
+        T::fields()
     }
 }
 

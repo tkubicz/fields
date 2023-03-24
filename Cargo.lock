@@ -3,28 +3,28 @@
 version = 3
 
 [[package]]
-name = "field-names"
+name = "fields"
 version = "0.1.0"
 dependencies = [
- "field-names-derive",
+ "fields-derive",
  "once_cell",
 ]
 
 [[package]]
-name = "field-names-derive"
+name = "fields-derive"
 version = "0.1.0"
 dependencies = [
- "field-names",
+ "fields",
  "proc-macro2",
  "quote",
  "syn",
 ]
 
 [[package]]
-name = "field-names-test"
+name = "fields-test"
 version = "0.1.0"
 dependencies = [
- "field-names",
+ "fields",
 ]
 
 [[package]]

@@ -20,9 +20,9 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
     };
 
     let result = quote! {
-        impl #impl_generics ::field_names::Fields for #name #type_generics #where_clause {
+        impl #impl_generics ::fields::Fields for #name #type_generics #where_clause {
             fn fields() -> &'static Option<Vec<String>> {
-                static INSTANCE: ::field_names::OnceCell<Option<Vec<String>>> = ::field_names::OnceCell::new();
+                static INSTANCE: ::fields::OnceCell<Option<Vec<String>>> = ::fields::OnceCell::new();
                 INSTANCE.get_or_init(|| {
                     let mut field_names = Vec::new();
                     #({

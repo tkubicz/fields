@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use field_names::Fields;
+use fields::Fields;
 
 #[derive(Fields)]
 #[fields(rename_all = "camelCase")]

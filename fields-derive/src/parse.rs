@@ -45,7 +45,7 @@ pub(crate) fn parse_fields(
                 (Some(name), Some(type_path)) => {
                     let name = field_attrs.rename.unwrap_or(name);
                     let fields = if field_attrs.nested {
-                        quote! { <#type_path as ::field_names::Fields>::fields() }
+                        quote! { <#type_path as ::fields::Fields>::fields() }
                     } else {
                         quote! { &None }
                     };
@@ -54,7 +54,7 @@ pub(crate) fn parse_fields(
                 }
                 (None, Some(type_path)) => {
                     let fields = if field_attrs.nested {
-                        quote! { <#type_path as ::field_names::Fields>::fields() }
+                        quote! { <#type_path as ::fields::Fields>::fields() }
                     } else {
                         quote! { &None }
                     };
