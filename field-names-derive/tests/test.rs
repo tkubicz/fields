@@ -3,7 +3,6 @@
 use std::collections::HashMap;
 
 use field_names::Fields;
-use field_names_derive::Fields;
 
 fn get_fields<T: Fields>() -> Vec<&'static str> {
     T::fields()
@@ -12,6 +11,10 @@ fn get_fields<T: Fields>() -> Vec<&'static str> {
         .iter()
         .map(|f| f.as_str())
         .collect()
+}
+
+fn assert_fields(expected: &[&str], fields: &[&str]) {
+    expected.iter().for_each(|e| assert!(fields.contains(e)));
 }
 
 #[test]
@@ -25,9 +28,7 @@ fn all_fields_are_included() {
     }
 
     let fields: Vec<&str> = get_fields::<TestStruct>();
-    vec!["a", "b", "c"]
-        .iter()
-        .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(&vec!["a", "b", "c"], &fields);
 }
 
 #[test]
@@ -44,9 +45,7 @@ fn single_level_nested_structs_are_supported() {
     }
 
     let fields: Vec<&str> = get_fields::<Level0>();
-    vec!["a", "b.nested"]
-        .iter()
-        .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(&vec!["a", "b.nested"], &fields);
 }
 
 #[test]
@@ -75,14 +74,15 @@ fn deeply_nested_structs() {
     }
 
     let fields: Vec<&str> = get_fields::<Level0>();
-    vec![
-        "a",
-        "level_1.b",
-        "level_1.level_2.c",
-        "level_1.level_2.level_3.d",
-    ]
-    .iter()
-    .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(
+        &vec![
+            "a",
+            "level_1.b",
+            "level_1.level_2.c",
+            "level_1.level_2.level_3.d",
+        ],
+        &fields,
+    );
 }
 
 #[test]
@@ -102,9 +102,7 @@ fn vec_derivation() {
     }
 
     let fields = get_fields::<Test>();
-    vec!["x", "y", "vec.a", "vec.b", "vec.c"]
-        .iter()
-        .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(&vec!["x", "y", "vec.a", "vec.b", "vec.c"], &fields);
 }
 
 #[test]
@@ -122,17 +120,27 @@ fn hash_map_derivation() {
     }
 
     let fields = get_fields::<Test>();
-    vec!["x", "y.a", "y.b"]
-        .iter()
-        .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(&vec!["x", "y.a", "y.b"], &fields);
 }
 
 #[test]
-fn parse_enum() {
+fn parse_named_enum() {
     #[derive(Fields)]
     enum Test {
         Variant1 { a: String },
         Variant2 { b: String },
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(&vec!["a", "b"], &fields);
+}
+
+#[test]
+fn parse_unnamed_enum() {
+    #[derive(Fields)]
+    enum Test {
+        Variant1(Variant1),
+        Variant2(Variant2),
     }
 
     #[derive(Fields)]
@@ -146,7 +154,23 @@ fn parse_enum() {
     }
 
     let fields = get_fields::<Test>();
-    vec!["a", "b"]
-        .iter()
-        .for_each(|e| assert!(fields.contains(e)));
+    assert_fields(&vec!["a", "b"], &fields);
+}
+
+#[test]
+fn parse_mixed_enum() {
+    #[derive(Fields)]
+    enum TestEnum {
+        Variant1(Variant1),
+        Variant2 { c: i32, d: i32 },
+    }
+
+    #[derive(Fields)]
+    struct Variant1 {
+        a: i32,
+        b: i32,
+    }
+
+    let fields = get_fields::<TestEnum>();
+    assert_fields(&vec!["a", "b", "c", "d"], &fields);
 }

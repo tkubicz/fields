@@ -1,0 +1,7 @@
+group_imports = "StdExternalCrate" # unstable
+imports_granularity = "Module" # unstable
+newline_style = "Unix"
+normalize_doc_attributes = true # unstable
+reorder_impl_items = true # unstable
+wrap_comments = true # unstable
+format_strings = true # unstable

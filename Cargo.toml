@@ -3,4 +3,4 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = ["field-names", "field-names-derive"]
+members = ["field-names", "field-names-derive", "field-names-test"]
