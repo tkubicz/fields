@@ -1,0 +1,8 @@
+[package]
+name = "field-names"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+once_cell = "1.17.1"
+field-names-derive = { path = "../field-names-derive" }

@@ -1,0 +1,15 @@
+[package]
+name = "field-names-derive"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "2"
+quote = "1"
+proc-macro2 = "1"
+
+[dev-dependencies]
+field-names = { path = "../field-names" }
