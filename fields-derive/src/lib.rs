@@ -6,6 +6,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput};
 
+#[doc = include_str!("../../docs/fields.md")]
 #[proc_macro_derive(Fields, attributes(fields))]
 pub fn derive_fields(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
