@@ -174,3 +174,106 @@ fn parse_mixed_enum() {
     let fields = get_fields::<TestEnum>();
     assert_fields(&vec!["a", "b", "c", "d"], &fields);
 }
+
+#[test]
+fn rename_field() {
+    #[derive(Fields)]
+    struct Test {
+        #[fields(rename = "renamed")]
+        original: String,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(&vec!["renamed"], &fields);
+}
+
+#[test]
+fn skip_fields() {
+    #[derive(Fields)]
+    struct Test {
+        a: i32,
+        #[fields(skip)]
+        b: i32,
+        #[fields(skip)]
+        c: i32,
+        d: i32,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(&vec!["a", "d"], &fields);
+}
+
+#[test]
+fn disable_nesting() {
+    #[derive(Fields)]
+    struct Test {
+        a: i32,
+        #[fields(nested = false)]
+        b: Nested,
+    }
+
+    struct Nested {
+        c: i32,
+        d: i32,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(&vec!["a", "b"], &fields);
+}
+
+#[test]
+fn combine_field_attributes() {
+    #[derive(Fields)]
+    struct Test {
+        #[fields(rename = "renamed")]
+        original: i32,
+        #[fields(skip)]
+        skipped: i32,
+        #[fields(nested = true, rename = "nested_renamed")]
+        nested: Nested,
+        #[fields(nested = false)]
+        not_nested: NotNested,
+    }
+
+    #[derive(Fields)]
+    struct Nested {
+        #[fields(rename = "a_renamed")]
+        a: i32,
+        #[fields(rename = "b_renamed")]
+        b: i32,
+    }
+
+    struct NotNested {
+        c: i32,
+        d: i32,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(
+        &vec![
+            "renamed",
+            "nested_renamed.a_renamed",
+            "nested_renamed.b_renamed",
+            "not_nested",
+        ],
+        &fields,
+    );
+}
+
+#[test]
+fn rename_all() {
+    #[derive(Fields)]
+    #[fields(rename_all = "camelCase")]
+    struct Test {
+        account_id: String,
+        bank_id: String,
+        wallet_id: String,
+        some_longer_example_string: String,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(
+        &vec!["accountId", "bankId", "walletId", "someLongerExampleString"],
+        &fields,
+    );
+}
