@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Fields, Type, Variant};
+use syn::{Fields, Ident, Type, Variant};
 
 use crate::attributes::field::parse_field_attributes;
 use crate::attributes::structure::StructAttributes;
@@ -27,9 +27,9 @@ pub(crate) fn parse_fields(
     for field in fields.iter() {
         let field_name = field.ident.as_ref().map(|i| {
             if let Some(ref rename_all) = struct_attrs.rename_all {
-                rename_all.rename(&i.to_string())
+                rename_all.rename(&sanitize_name(i))
             } else {
-                i.to_string()
+                sanitize_name(i)
             }
         });
         let field_type = &field.ty;
@@ -70,4 +70,13 @@ pub(crate) fn parse_fields(
         }
     }
     field_exprs
+}
+
+fn sanitize_name(ident: &Ident) -> String {
+    let str = ident.to_string();
+    if str.starts_with("r#") {
+        str[2..].to_string()
+    } else {
+        str
+    }
 }

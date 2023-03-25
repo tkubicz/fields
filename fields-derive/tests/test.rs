@@ -106,6 +106,17 @@ fn default_instance_for_vec_is_derived() {
 }
 
 #[test]
+fn raw_names_are_sanitized() {
+    #[derive(Fields)]
+    struct Test {
+        r#type: String,
+    }
+
+    let fields = get_fields::<Test>();
+    assert_fields(&vec!["type"], &fields);
+}
+
+#[test]
 fn default_instance_for_hash_map_is_derived() {
     #[derive(Fields)]
     struct Test {
