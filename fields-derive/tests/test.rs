@@ -32,7 +32,7 @@ fn all_fields_are_included() {
 }
 
 #[test]
-fn single_level_nested_structs_are_supported() {
+fn single_level_nested_structs_are_included() {
     #[derive(Fields)]
     struct Level0 {
         a: String,
@@ -49,7 +49,7 @@ fn single_level_nested_structs_are_supported() {
 }
 
 #[test]
-fn deeply_nested_structs() {
+fn multiple_level_nested_structs_are_included() {
     #[derive(Fields)]
     struct Level0 {
         a: u8,
@@ -86,7 +86,7 @@ fn deeply_nested_structs() {
 }
 
 #[test]
-fn vec_derivation() {
+fn default_instance_for_vec_is_derived() {
     #[derive(Fields)]
     struct Test {
         x: String,
@@ -106,7 +106,7 @@ fn vec_derivation() {
 }
 
 #[test]
-fn hash_map_derivation() {
+fn default_instance_for_hash_map_is_derived() {
     #[derive(Fields)]
     struct Test {
         x: String,
@@ -124,7 +124,7 @@ fn hash_map_derivation() {
 }
 
 #[test]
-fn parse_named_enum() {
+fn enum_variant_fields_are_included() {
     #[derive(Fields)]
     enum Test {
         Variant1 { a: String },
@@ -136,7 +136,7 @@ fn parse_named_enum() {
 }
 
 #[test]
-fn parse_unnamed_enum() {
+fn wrapped_enum_variant_fields_are_included() {
     #[derive(Fields)]
     enum Test {
         Variant1(Variant1),
@@ -158,7 +158,7 @@ fn parse_unnamed_enum() {
 }
 
 #[test]
-fn parse_mixed_enum() {
+fn mixed_enums_are_included() {
     #[derive(Fields)]
     enum TestEnum {
         Variant1(Variant1),
@@ -176,7 +176,7 @@ fn parse_mixed_enum() {
 }
 
 #[test]
-fn rename_field() {
+fn renaming_fields_is_working() {
     #[derive(Fields)]
     struct Test {
         #[fields(rename = "renamed")]
@@ -188,7 +188,7 @@ fn rename_field() {
 }
 
 #[test]
-fn skip_fields() {
+fn skipping_fields_is_working() {
     #[derive(Fields)]
     struct Test {
         a: i32,
@@ -222,7 +222,7 @@ fn disable_nesting() {
 }
 
 #[test]
-fn combine_field_attributes() {
+fn combining_field_attributes_is_working() {
     #[derive(Fields)]
     struct Test {
         #[fields(rename = "renamed")]
@@ -261,7 +261,7 @@ fn combine_field_attributes() {
 }
 
 #[test]
-fn rename_all() {
+fn renaming_all_fields_is_working() {
     #[derive(Fields)]
     #[fields(rename_all = "camelCase")]
     struct Test {

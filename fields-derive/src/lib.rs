@@ -1,3 +1,7 @@
+//! [Fields] procedural macro
+//!
+//! `fields_derive` is a procedural macro crate for `fields`. It's a transient
+//! dependency and should not be used directly.
 mod attributes;
 mod parse;
 
