@@ -87,3 +87,10 @@ impl_none_fields!(i64);
 impl_none_fields!(i128);
 impl_none_fields!(f32);
 impl_none_fields!(f64);
+
+#[cfg(feature = "chrono")]
+impl<Tz: chrono::TimeZone> Fields for chrono::DateTime<Tz> {
+    fn fields() -> &'static Option<Vec<String>> {
+        &None
+    }
+}
