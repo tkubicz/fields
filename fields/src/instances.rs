@@ -72,6 +72,7 @@ impl<T: Fields> Fields for BinaryHeap<T> {
     }
 }
 
+impl_none_fields!(bool);
 impl_none_fields!(String);
 impl_none_fields!(usize);
 impl_none_fields!(u8);
