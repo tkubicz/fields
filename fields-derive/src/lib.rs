@@ -26,12 +26,12 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
 
     let result = quote! {
         impl #impl_generics ::fields::Fields for #name #type_generics #where_clause {
-            fn fields() -> &'static Option<Vec<String>> {
-                static INSTANCE: ::fields::OnceCell<Option<Vec<String>>> = ::fields::OnceCell::new();
+            fn fields() -> &'static Option<std::collections::HashSet<String>> {
+                static INSTANCE: ::fields::OnceCell<Option<std::collections::HashSet<String>>> = ::fields::OnceCell::new();
                 INSTANCE.get_or_init(|| {
-                    let mut field_names = Vec::new();
+                    let mut field_names = std::collections::HashSet::new();
                     #({
-                        let (field_name, optional_fields): (Option<&str>, &Option<Vec<String>>) = #parsed_fields;
+                        let (field_name, optional_fields): (Option<&str>, &Option<std::collections::HashSet<String>>) = #parsed_fields;
                         match (field_name, optional_fields) {
                             (Some(name), Some(fields)) => {
                                 field_names.extend(
@@ -50,7 +50,7 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
                                 );
                             }
                             (Some(name), None) => {
-                                field_names.push(name.to_string());
+                                field_names.insert(name.to_string());
                             }
                             (None, None) => {}
                         }

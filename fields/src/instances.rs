@@ -5,7 +5,7 @@ use crate::Fields;
 macro_rules! impl_none_fields {
     ($type_:ident) => {
         impl Fields for $type_ {
-            fn fields() -> &'static Option<Vec<String>> {
+            fn fields() -> &'static Option<HashSet<String>> {
                 &None
             }
         }
@@ -13,61 +13,61 @@ macro_rules! impl_none_fields {
 }
 
 impl<T: Fields> Fields for Option<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<T: Fields, E> Fields for Result<T, E> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<T: Fields> Fields for Vec<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<T: Fields> Fields for VecDeque<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<T: Fields> Fields for LinkedList<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<K, V: Fields> Fields for HashMap<K, V> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         V::fields()
     }
 }
 
 impl<K, V: Fields> Fields for BTreeMap<K, V> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         V::fields()
     }
 }
 
 impl<T, S: Fields> Fields for HashSet<T, S> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         S::fields()
     }
 }
 
 impl<T: Fields> Fields for BTreeSet<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
 
 impl<T: Fields> Fields for BinaryHeap<T> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         T::fields()
     }
 }
@@ -90,7 +90,7 @@ impl_none_fields!(f64);
 
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> Fields for chrono::DateTime<Tz> {
-    fn fields() -> &'static Option<Vec<String>> {
+    fn fields() -> &'static Option<HashSet<String>> {
         &None
     }
 }
