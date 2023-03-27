@@ -1,6 +1,6 @@
 Derive a list of fields for this structure.
 
-# Marco parameters applied on the struct/enum level
+# Macro parameters applied on the struct/enum level
 
 These are the attributes that can be used on a structure or enum.
 
