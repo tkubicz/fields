@@ -74,8 +74,8 @@ pub(crate) fn parse_fields(
 
 fn sanitize_name(ident: &Ident) -> String {
     let str = ident.to_string();
-    if str.starts_with("r#") {
-        str[2..].to_string()
+    if let Some(sanitized) = str.strip_prefix("r#") {
+        sanitized.to_string()
     } else {
         str
     }
