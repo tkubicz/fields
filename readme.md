@@ -12,13 +12,29 @@ use fields::Fields;
 struct SomeStruct {
   first_field: i32,
   second_field: i32,
+  #[fields(skip)]
   third_field: i32,
+  nested: Nested,
+  #[fields(nested = false)]
+  not_nested: NotNested;
 }
+
+#[derive(Fields)]
+struct Nested {
+  one: i32,
+  two: i32,
+}
+
+struct NotNested {
+  one: i32, 
+  two: i32,
+}
+
 
 // Usage
 fn main() {
   let fields = SomeStruct::fields();
-  // Outputs Some("firstField", "secondField", "thirdField")
+  // Outputs Some("firstField", "secondField", "nested.one", "nested.two", "notNested")
   println!("{fields:?}"); 
 }
 ```
