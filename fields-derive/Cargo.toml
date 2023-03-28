@@ -10,6 +10,7 @@ proc-macro = true
 syn = "^2"
 quote = "^1"
 proc-macro2 = "^1"
+proc-macro-error = "^1"
 
 [dev-dependencies]
 fields = { path = "../fields" }

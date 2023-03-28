@@ -1,3 +1,4 @@
+use proc_macro_error::abort;
 use syn::punctuated::Punctuated;
 use syn::{Attribute, Expr, Lit, Meta, Token};
 
@@ -51,10 +52,13 @@ pub(crate) fn parse_field_attributes(attributes: &Vec<Attribute>) -> FieldAttrib
                                     let new_name = str_lit.value();
                                     attrs.rename(new_name);
                                 }
-                                _ => panic!("Attribute `rename` expects string literal as value"),
+                                _ => abort!(
+                                    expr_lit.lit,
+                                    "Attribute `rename` expects string literal as value"
+                                ),
                             }
                         } else {
-                            panic!("Attribute `rename` expects literal as value");
+                            abort!(value.value, "Attribute `rename` expects literal as value");
                         }
                     }
                     Meta::NameValue(value) if value.path.is_ident("nested") => {
@@ -64,10 +68,13 @@ pub(crate) fn parse_field_attributes(attributes: &Vec<Attribute>) -> FieldAttrib
                                     let new_value = bool_lit.value();
                                     attrs.nested(new_value);
                                 }
-                                _ => panic!("Attribute `nested` expects bool literal as value"),
+                                _ => abort!(
+                                    expr_lit.lit,
+                                    "Attribute `nested` expects bool literal as value"
+                                ),
                             }
                         } else {
-                            panic!("Attribute `nested` expects literal as value")
+                            abort!(value.value, "Attribute `nested` expects literal as value")
                         }
                     }
 
@@ -76,7 +83,7 @@ pub(crate) fn parse_field_attributes(attributes: &Vec<Attribute>) -> FieldAttrib
                             .path()
                             .get_ident()
                             .expect("Cannot get identifier for unrecognized attribute");
-                        panic!("Unrecognized attribute `{}`", ident)
+                        abort!(ident, "Unrecognized attribute `{}`", ident)
                     }
                 }
             }

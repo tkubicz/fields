@@ -54,9 +54,9 @@ impl<K, V: Fields> Fields for BTreeMap<K, V> {
     }
 }
 
-impl<T, S: Fields> Fields for HashSet<T, S> {
+impl<T: Fields, S> Fields for HashSet<T, S> {
     fn fields() -> &'static Option<HashSet<String>> {
-        S::fields()
+        T::fields()
     }
 }
 

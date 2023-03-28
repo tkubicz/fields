@@ -7,11 +7,13 @@ mod parse;
 
 use attributes::structure::parse_struct_attributes;
 use proc_macro::TokenStream;
+use proc_macro_error::{abort, proc_macro_error};
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput};
 
 #[doc = include_str!("../../docs/fields.md")]
 #[proc_macro_derive(Fields, attributes(fields))]
+#[proc_macro_error]
 pub fn derive_fields(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
@@ -21,7 +23,10 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
     let parsed_fields = match &input.data {
         Data::Struct(data) => parse::parse_fields(&data.fields, &struct_attrs),
         Data::Enum(en) => parse::parse_enum_variants(&en.variants, &struct_attrs),
-        _ => panic!("Fields macro is only applicable to named structs or enums"),
+        _ => abort!(
+            input,
+            "Fields macro is only applicable to named structs or enums"
+        ),
     };
 
     let result = quote! {
@@ -35,18 +40,12 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
                         match (field_name, optional_fields) {
                             (Some(name), Some(fields)) => {
                                 field_names.extend(
-                                    fields
-                                        .iter()
-                                        .map(|field| format!("{}.{}", name, field))
-                                        .collect::<Vec<_>>()
+                                    fields.iter().map(|field| format!("{}.{}", name, field))
                                 );
                             },
                             (None, Some(fields)) => {
                                 field_names.extend(
-                                    fields
-                                        .iter()
-                                        .map(|field| format!("{}", field))
-                                        .collect::<Vec<_>>()
+                                    fields.iter().map(|field| format!("{}", field))
                                 );
                             }
                             (Some(name), None) => {

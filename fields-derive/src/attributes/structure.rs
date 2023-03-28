@@ -1,3 +1,6 @@
+use std::fmt::Display;
+
+use proc_macro_error::abort;
 use syn::punctuated::Punctuated;
 use syn::{Attribute, Expr, Lit, Meta, Token};
 
@@ -49,25 +52,42 @@ impl RenameAll {
     }
 }
 
-impl From<&str> for RenameAll {
-    fn from(value: &str) -> Self {
+impl<'a> TryFrom<&'a str> for RenameAll {
+    type Error = RenameAllError<'a>;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
         match value {
-            "lowercase" => Self::Lower,
-            "UPPERCASE" => Self::Upper,
-            "PascalCase" => Self::Pascal,
-            "camelCase" => Self::Camel,
-            "snake_case" => Self::Snake,
-            "SCREAMING_SNAKE_CASE" => Self::ScreamingSnake,
-            "kebab-case" => Self::Kebab,
-            "SCREAMING-KEBAB-CASE" => Self::ScreamingKebab,
-            _ => panic!(
-                "Invalid value. Available options are: `lowercase`, `UPPERCASE`, `PascalCase`, \
-                 'camelCase', `snake_case`, `SCREAMING_SNAKE_CASE`, `kebab-case`, \
-                 `SCREAMING-KEBAB-CASE`"
-            ),
+            "lowercase" => Ok(Self::Lower),
+            "UPPERCASE" => Ok(Self::Upper),
+            "PascalCase" => Ok(Self::Pascal),
+            "camelCase" => Ok(Self::Camel),
+            "snake_case" => Ok(Self::Snake),
+            "SCREAMING_SNAKE_CASE" => Ok(Self::ScreamingSnake),
+            "kebab-case" => Ok(Self::Kebab),
+            "SCREAMING-KEBAB-CASE" => Ok(Self::ScreamingKebab),
+            invalid_value => Err(RenameAllError { invalid_value }),
         }
     }
 }
+
+#[derive(Debug)]
+pub struct RenameAllError<'a> {
+    invalid_value: &'a str,
+}
+
+impl<'a> Display for RenameAllError<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Invalid value `{}`. Available options are: `lowercase`, `UPPERCASE`, `PascalCase`, \
+             'camelCase', `snake_case`, `SCREAMING_SNAKE_CASE`, `kebab-case`, \
+             `SCREAMING-KEBAB-CASE`",
+            self.invalid_value
+        )
+    }
+}
+
+impl<'a> std::error::Error for RenameAllError<'a> {}
 
 pub fn parse_struct_attributes(attributes: &Vec<Attribute>) -> StructAttributes {
     let mut attrs = StructAttributes::default();
@@ -84,15 +104,25 @@ pub fn parse_struct_attributes(attributes: &Vec<Attribute>) -> StructAttributes 
                         if let Expr::Lit(expr_lit) = value.value {
                             match expr_lit.lit {
                                 Lit::Str(str_lit) => {
-                                    let rename_all: RenameAll = str_lit.value().as_str().into();
+                                    let rename_all: RenameAll =
+                                        match str_lit.value().as_str().try_into() {
+                                            Ok(result) => result,
+                                            Err(e) => abort!(str_lit, e),
+                                        };
                                     attrs.rename_all = Some(rename_all);
                                 }
                                 _ => {
-                                    panic!("Attribute `rename_all` expects string literal as value")
+                                    abort!(
+                                        expr_lit.lit,
+                                        "Attribute `rename_all` expects string literal as value"
+                                    )
                                 }
                             }
                         } else {
-                            panic!("Attribute `rename_all` expects literal as value");
+                            abort!(
+                                value.value,
+                                "Attribute `rename_all` expects literal as value"
+                            );
                         }
                     }
                     other => {
@@ -100,7 +130,7 @@ pub fn parse_struct_attributes(attributes: &Vec<Attribute>) -> StructAttributes 
                             .path()
                             .get_ident()
                             .expect("Cannot get identifier for unrecognized attribute");
-                        panic!("Unrecognized attribute `{}`", ident)
+                        abort!(ident, "Unrecognized attribute `{}`", ident)
                     }
                 }
             }
