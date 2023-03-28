@@ -72,6 +72,12 @@ impl<T: Fields> Fields for BinaryHeap<T> {
     }
 }
 
+impl<T: Fields> Fields for Box<T> {
+    fn fields() -> &'static Option<std::collections::HashSet<String>> {
+        T::fields()
+    }
+}
+
 impl_none_fields!(bool);
 impl_none_fields!(String);
 impl_none_fields!(usize);
